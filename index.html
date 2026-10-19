@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08080a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hygiène">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Révision Hygiène Tattoo</title>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box}*,*::before,*::after{box-sizing:inherit}body{margin:0;-webkit-text-size-adjust:100%}img{max-width:100%}[hidden]{display:none!important}</style>
+
+
+<style>
+/* Layout: appli mobile sombre, une colonne (max 520px), barre d'onglets fixe en bas.
+   Univers Hugo Smoll : noir profond, gris graphite, blanc, or ; l'étoile dorée à 8 branches comme logo.
+   Thème unique sombre, choisi volontairement. */
+:root{
+  --bg:#08080a;
+  --surface:#141416;
+  --surface-2:#1c1c1f;
+  --ink:#f4f3ef;
+  --muted:#8e8d89;
+  --line:#26262a;
+  --gold:#e6b325;
+  --gold-hi:#f3d36a;
+  --gold-deep:#a8740f;
+  --good:#7fc79a;
+  --bad:#e4766d;
+  --f-ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --f-mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --tabbar:76px;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.app{max-width:520px;margin:0 auto;padding-block:18px calc(var(--tabbar) + 28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px;box-sizing:border-box}
+h1,h2,h3{margin:0;line-height:1.15;text-wrap:balance;font-weight:800;letter-spacing:-.01em}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:12px}
+.label{font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.gold{color:var(--gold)}
+.star{display:block}
+
+/* Barre du haut */
+.topbar{display:flex;align-items:center;gap:12px}
+.topbar .who{flex:1;min-width:0}
+.topbar .who p{color:var(--muted);font-size:13px}
+.topbar .who h2{font-size:19px}
+.logo{width:44px;height:44px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;flex:none}
+.iconbtn{width:44px;height:44px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;flex:none}
+
+/* Pastilles */
+.pills{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-inline:-2px;padding:2px}
+.pills::-webkit-scrollbar{display:none}
+.pill{padding:9px 16px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:14px;font-weight:600;color:var(--muted);white-space:nowrap}
+.pill[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:#0b0b0c}
+
+/* Carte progression */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:18px}
+.hero-card{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;background:radial-gradient(120% 140% at 0% 0%,#231d0d 0%,var(--surface) 55%);}
+.ring{position:relative;width:132px;height:132px}
+.ring svg{display:block}
+.ring .val{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring .val b{font-size:34px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.ring .val small{font-size:12px;color:var(--muted)}
+.hero-card .txt{display:flex;flex-direction:column;gap:6px;min-width:0}
+.hero-card h3{font-size:20px}
+.hero-card p{color:var(--muted);font-size:14px}
+
+/* Tuiles */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px 12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.tile b{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile span{font-size:12px;color:var(--muted)}
+.tile.hl{background:linear-gradient(160deg,var(--gold-hi),var(--gold) 55%,var(--gold-deep));border-color:transparent;color:#0b0b0c}
+.tile.hl span{color:#2a2208}
+
+/* Continuer */
+.resume{display:flex;align-items:center;gap:14px}
+.resume .txt{flex:1;min-width:0}
+.resume h3{font-size:18px}
+.resume p{color:var(--muted);font-size:13px}
+.go{width:54px;height:54px;border-radius:50%;background:var(--gold);color:#0b0b0c;display:grid;place-items:center;flex:none;box-shadow:0 0 0 6px rgba(230,179,37,.12)}
+
+/* Historique scores */
+.sechead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.sechead h3{font-size:18px}
+.sechead button{color:var(--gold);font-size:14px;font-weight:600}
+.bars{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;height:120px;padding-top:18px}
+.bars .b{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;min-width:0}
+.bars .b i{width:6px;border-radius:3px;background:var(--surface-2);display:block;position:relative}
+.bars .b.on i{background:var(--gold)}
+.bars .b.last i::before{content:"";position:absolute;top:-12px;left:50%;width:8px;height:8px;margin-left:-6px;border-radius:50%;border:2px solid var(--ink);background:var(--bg)}
+.bars .b span{font-family:var(--f-mono);font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums}
+.empty{color:var(--muted);font-size:14px;padding-block:12px}
+
+/* Liste des cours */
+.list{display:flex;flex-direction:column;gap:10px;list-style:none;margin:0;padding:0}
+.course{width:100%;display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 14px}
+.course .ic{width:46px;height:46px;border-radius:14px;background:var(--surface-2);display:grid;place-items:center;flex:none;color:var(--muted)}
+.course.done .ic{background:rgba(230,179,37,.14);color:var(--gold)}
+.course .meta{flex:1;min-width:0}
+.course .name{font-weight:700;font-size:16px;line-height:1.25;display:block}
+.course .sub{font-size:13px;color:var(--muted)}
+.state{font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted);flex:none}
+.done .state{background:rgba(230,179,37,.14);color:var(--gold)}
+
+/* Fiches */
+.deck{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.deck::-webkit-scrollbar{display:none}
+.card{flex:0 0 100%;scroll-snap-align:center;box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:24px;
+  padding:22px 20px;min-height:min(60vh,500px);display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden}
+.card .corner{position:absolute;right:-30px;top:-30px;opacity:.07}
+.card h3{font-size:25px;position:relative}
+.card ul,.card ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px}
+.card li::marker{color:var(--gold)}
+.card .key{margin-top:auto;background:var(--surface-2);border-radius:16px;padding:14px;font-size:15px}
+.card .key b{font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:6px;color:var(--gold);margin-bottom:4px}
+.card table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.card td{border-top:1px solid var(--line);padding:8px 4px;vertical-align:top}
+.card td:first-child{font-weight:700;color:var(--ink);padding-right:10px}
+.card td:last-child{color:#c9c8c3}
+.card.end{justify-content:center;align-items:flex-start;background:radial-gradient(120% 100% at 100% 0%,#2a220c 0%,var(--surface) 60%)}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.dots{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;flex:1}
+.dots i{width:7px;height:7px;border-radius:4px;background:var(--surface-2);transition:all .2s}
+.dots i.on{background:var(--gold);width:22px}
+.nav{width:48px;height:48px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;flex:none}
+.nav.primary{background:var(--gold);border-color:var(--gold);color:#0b0b0c}
+.nav:disabled{opacity:.3;cursor:default}
+
+/* Boutons */
+.btn{border-radius:999px;padding:14px 20px;font-weight:700;background:var(--gold);color:#0b0b0c;text-align:center}
+.btn.dark{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row .btn{flex:1;min-width:130px}
+
+/* Examen */
+.exam{display:flex;flex-direction:column;gap:14px;background:radial-gradient(140% 120% at 100% 0%,#2b230d 0%,var(--surface) 60%)}
+.exam h3{font-size:24px}
+.exam p{color:var(--muted);font-size:14px}
+.exam .play{display:flex;align-items:center;gap:14px}
+.exam .play .go{width:64px;height:64px}
+
+/* Quiz */
+.qtop{display:flex;align-items:center;gap:12px}
+.qtop .t{flex:1;min-width:0}
+.qtop h2{font-size:18px}
+.track{height:6px;border-radius:3px;background:var(--surface-2);overflow:hidden}
+.track i{display:block;height:100%;background:var(--gold);transition:width .3s}
+.qbox{display:flex;flex-direction:column;gap:16px}
+.qbox h3{font-size:22px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{background:var(--surface-2);border-radius:999px;padding:4px 10px;font-family:var(--f-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.tag.g{color:var(--gold);background:rgba(230,179,37,.12)}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;background:var(--surface-2);border:1.5px solid transparent;border-radius:16px;padding:14px;display:flex;gap:12px;align-items:center}
+.opt .l{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--bg);font-family:var(--f-mono);font-size:12px;color:var(--muted);flex:none}
+.opt.right{border-color:var(--good)} .opt.right .l{background:var(--good);color:#0b0b0c}
+.opt.wrong{border-color:var(--bad)} .opt.wrong .l{background:var(--bad);color:#0b0b0c}
+.opt:disabled{cursor:default}
+.answer{background:var(--surface-2);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:4px}
+.explain{font-size:14px;color:var(--muted)}
+.verdict{font-weight:800}
+.verdict.ok{color:var(--good)} .verdict.ko{color:var(--bad)}
+.btn.good{background:var(--good)} .btn.bad{background:var(--bad)}
+.score{display:flex;align-items:center;gap:18px}
+.review{display:flex;flex-direction:column;gap:10px;list-style:none;padding:0;margin:0}
+.review li{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;font-size:14px;color:#c9c8c3}
+.review li b{display:block;margin-bottom:4px;font-size:15px;color:var(--ink)}
+
+/* Barre d'onglets */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(180deg,transparent,var(--bg) 35%)}
+.tabbar nav{max-width:520px;margin:0 auto;height:var(--tabbar);box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:28px;display:grid;grid-template-columns:1fr 1fr auto 1fr 1fr;align-items:center;padding:0 8px}
+.tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--muted);padding-block:6px}
+.tab[aria-current="page"]{color:var(--gold)}
+.tab.center{width:60px;height:60px;border-radius:50%;background:var(--gold);color:#0b0b0c;display:grid;place-items:center;margin-top:-30px;box-shadow:0 0 0 6px var(--bg)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+</head>
+<body>
+<div class="app" id="app"></div>
+<div class="tabbar"><nav id="tabs" aria-label="Navigation"></nav></div>
+
+<script>
+const COURSES = [
+{ id:"reglementation", title:"Cadre réglementaire", sub:"ARS, formation, textes",
+ cards:[
+  {h:"Trois obligations", html:`<ul><li><b>Déclarer</b> son activité à l'ARS du lieu d'exercice.</li><li><b>Suivre</b> la formation hygiène et salubrité dans un organisme habilité.</li><li><b>Respecter</b> les bonnes pratiques d'hygiène.</li></ul>`, key:"Ce sont trois obligations distinctes : l'une ne remplace pas l'autre."},
+  {h:"La formation", html:`<p>21 heures, réparties sur 3 jours minimum, dans un organisme habilité.</p><p>L'attestation se conserve et se présente lors d'un contrôle.</p>`, key:"Arrêté du 12 décembre 2008 : contenu et durée de la formation."},
+  {h:"La déclaration ARS", html:`<ul><li>Faite avant de commencer l'activité.</li><li>Pour chaque lieu d'exercice.</li><li>Y compris pour une convention ou un guest.</li></ul>`, key:"Pas de déclaration ou pas de formation = contravention possible."},
+  {h:"Les textes à connaître", html:`<table><tr><td>CSP R.1311-1 à 13</td><td>Règles d'hygiène, déclaration, déchets, info client</td></tr><tr><td>Décret 2008-149</td><td>Conditions d'exercice</td></tr><tr><td>Arrêté 11 mars 2009</td><td>Bonnes pratiques d'hygiène</td></tr><tr><td>Arrêté 3 déc. 2008</td><td>Information du client</td></tr><tr><td>REACH UE 2020/2081</td><td>Substances interdites dans les encres</td></tr></table>`}
+ ]},
+{ id:"microbio", title:"Risques infectieux", sub:"Germes, transmission, vocabulaire",
+ cards:[
+  {h:"Le risque principal", html:`<p>Le tatouage effracte la peau. Deux risques dominent :</p><ul><li>la transmission de <b>virus par le sang</b> (VHB, VHC, VIH) ;</li><li>l'<b>infection bactérienne</b> de la plaie (staphylocoque doré, streptocoque, Pseudomonas).</li></ul>`},
+  {h:"Le VHB, champion de résistance", html:`<p>Le virus de l'hépatite B survit jusqu'à 7 jours hors du corps sur une surface.</p><p>Il est bien plus contagieux que le VIH. Un vaccin existe.</p>`, key:"Vaccination hépatite B recommandée pour le tatoueur."},
+  {h:"Échelle de résistance", html:`<p>Du plus fragile au plus résistant aux désinfectants :</p><ol><li>Virus enveloppés (VIH, VHB)</li><li>Bactéries</li><li>Champignons</li><li>Virus nus</li><li>Mycobactéries</li><li>Spores</li><li>Prions</li></ol>`},
+  {h:"La chaîne de transmission", html:`<p><b>Réservoir</b> → <b>mode de transmission</b> → <b>porte d'entrée</b> → <b>hôte réceptif</b>.</p><p>En tatouage, la porte d'entrée est la plaie elle-même.</p>`, key:"Casser un seul maillon suffit à empêcher l'infection."},
+  {h:"Vocabulaire", html:`<table><tr><td>Asepsie</td><td>Empêcher l'apport de germes</td></tr><tr><td>Antisepsie</td><td>Éliminer les germes sur un tissu vivant (peau)</td></tr><tr><td>Désinfection</td><td>Éliminer les germes sur un objet ou une surface</td></tr><tr><td>Stérilisation</td><td>Détruire tous les micro-organismes, spores comprises</td></tr><tr><td>Bionettoyage</td><td>Nettoyage + désinfection des surfaces</td></tr></table>`}
+ ]},
+{ id:"mains", title:"Mains et tenue", sub:"Lavage, SHA, gants",
+ cards:[
+  {h:"Lavage simple", html:`<ul><li>Mains visiblement sales, arrivée au salon, sortie des toilettes.</li><li>Savon doux + eau, 30 secondes minimum.</li><li>Essuie-mains à usage unique.</li></ul>`},
+  {h:"Friction hydroalcoolique", html:`<ul><li>Avant de mettre des gants, après les avoir retirés, entre deux étapes.</li><li>30 secondes, jusqu'à séchage complet.</li><li>Produit conforme à la norme EN 1500.</li></ul>`, key:"Les gants ne remplacent jamais l'hygiène des mains."},
+  {h:"Prérequis", html:`<ul><li>Ongles courts, sans vernis ni faux ongles.</li><li>Aucun bijou : bague, montre, bracelet.</li><li>Avant-bras dégagés.</li><li>Plaie aux mains couverte par un pansement étanche.</li></ul>`},
+  {h:"Les gants", html:`<ul><li>Nitrile, usage unique, non stériles.</li><li>Changés à chaque client.</li><li>Changés dès qu'ils touchent une surface non protégée : téléphone, tiroir, flacon.</li></ul>`},
+  {h:"Tenue", html:`<p>Tenue propre réservée au travail, cheveux attachés, tablier jetable recommandé pendant l'acte.</p>`, key:"Vaccins recommandés : hépatite B (avec sérologie) et DTP à jour."}
+ ]},
+{ id:"locaux", title:"Locaux et désinfection", sub:"Marche en avant, normes, fréquences",
+ cards:[
+  {h:"Organisation du salon", html:`<ul><li>Salle de tatouage dédiée, séparée de l'accueil.</li><li>Lavabo, savon, essuie-mains à usage unique.</li><li>Zone de nettoyage séparée si matériel réutilisable.</li><li>Surfaces lisses, lessivables, non poreuses.</li><li>Pas d'animaux ni de nourriture en salle.</li></ul>`},
+  {h:"La marche en avant", html:`<p>Le circuit va toujours du <b>propre vers le sale</b>, sans retour en arrière.</p><p>Le matériel sale ne croise jamais le matériel stérile.</p>`},
+  {h:"Normes des désinfectants", html:`<table><tr><td>EN 13727 / 14561</td><td>Bactéricide</td></tr><tr><td>EN 13624 / 14562</td><td>Levuricide</td></tr><tr><td>EN 14476</td><td>Virucide</td></tr><tr><td>EN 14348</td><td>Mycobactéricide</td></tr></table>`, key:"Vérifier la norme sur l'étiquette avant d'acheter."},
+  {h:"Fréquences", html:`<table><tr><td>Entre chaque client</td><td>Fauteuil, accoudoir, plan de travail, lampe, machine + nouvelles protections plastiques</td></tr><tr><td>Chaque jour</td><td>Sols, surfaces, lavabo, poubelles</td></tr><tr><td>Chaque semaine</td><td>Murs à hauteur de contact, rangements, aérations</td></tr></table>`},
+  {h:"La méthode", html:`<ul><li>Du haut vers le bas.</li><li>Du plus propre au plus sale.</li><li>Jamais deux produits mélangés.</li><li>Dilution et temps de contact respectés.</li></ul>`}
+ ]},
+{ id:"sterilisation", title:"Matériel et stérilisation", sub:"Usage unique, autoclave",
+ cards:[
+  {h:"Usage unique obligatoire", html:`<p>Aiguilles et cartouches, godets d'encre, gants, rasoirs, protections plastiques.</p><ul><li>Emballage intact.</li><li>Date de péremption vérifiée.</li><li>Ouvert devant le client.</li></ul>`},
+  {h:"Le circuit du réutilisable", html:`<ol><li>Pré-désinfection (immersion immédiate)</li><li>Nettoyage, ultrasons possibles, rinçage</li><li>Séchage</li><li>Conditionnement en sachet</li><li>Stérilisation à l'autoclave</li><li>Contrôle et traçabilité</li><li>Stockage au sec</li></ol>`, key:"L'ordre compte : on ne stérilise jamais un objet sale."},
+  {h:"L'autoclave", html:`<ul><li>Classe B, à vide fractionné : le seul adapté aux objets creux et emballés.</li><li>Cycle de référence : <b>134 °C pendant 18 minutes</b> (cycle prion).</li></ul>`},
+  {h:"Contrôles", html:`<ul><li>Test de Bowie-Dick : pénétration de la vapeur.</li><li>Test de vide.</li><li>Indicateur de passage qui vire sur chaque sachet.</li><li>Registre des cycles, maintenance annuelle.</li></ul>`},
+  {h:"Interdits", html:`<p>Ne valent pas stérilisation :</p><ul><li>stérilisateur à billes ;</li><li>Poupinel (chaleur sèche) ;</li><li>lampe UV ;</li><li>trempage seul.</li></ul>`}
+ ]},
+{ id:"seance", title:"Déroulé d'une séance", sub:"Poste, peau, acte, fin",
+ cards:[
+  {h:"Avant l'acte", html:`<ol><li>Information écrite remise, questionnaire, consentement signé.</li><li>Surfaces désinfectées, protections posées.</li><li>Matériel stérile disposé, emballages fermés.</li><li>Hygiène des mains, gants.</li></ol>`},
+  {h:"Préparation cutanée en 4 temps", html:`<ol><li><b>Détersion</b> : savon antiseptique</li><li><b>Rinçage</b> : eau stérile ou sérum physiologique</li><li><b>Séchage</b> : compresse stérile</li><li><b>Antisepsie</b> : antiseptique de la même gamme, temps de séchage respecté</li></ol>`, key:"Ne jamais mélanger deux familles : chlorhexidine OU povidone iodée."},
+  {h:"Pendant l'acte", html:`<ul><li>Rasoir à usage unique, avant l'antisepsie.</li><li>Stencil et vaseline prélevés dans un godet ou à la spatule, jamais dans le pot.</li><li>Encre servie en godets à usage unique.</li><li>Gants changés dès qu'ils touchent une surface non protégée.</li></ul>`},
+  {h:"Après l'acte", html:`<ol><li>Nettoyage de la zone, pansement ou film.</li><li>Conseils de soins remis.</li><li>Aiguilles directement au collecteur, sans recapuchonner.</li><li>Désinfection du poste avant le client suivant.</li></ol>`}
+ ]},
+{ id:"encres", title:"Encres et produits", sub:"REACH, étiquetage, traçabilité",
+ cards:[
+  {h:"Encres conformes REACH", html:`<p>Depuis le 4 janvier 2022, la restriction européenne UE 2020/2081 interdit ou limite de nombreuses substances dans les encres.</p>`, key:"Seules des encres conformes peuvent être utilisées."},
+  {h:"L'étiquette doit indiquer", html:`<ul><li>« Mélange destiné aux tatouages ou au maquillage permanent »</li><li>Numéro de lot</li><li>Date de péremption</li><li>Liste des ingrédients</li><li>Conditions d'utilisation</li></ul>`},
+  {h:"Bonnes pratiques", html:`<ul><li>Flacon stérile, délai après ouverture respecté.</li><li>Dilution à l'eau stérile ou au diluant du fabricant, jamais à l'eau du robinet.</li><li>Godets jetés après chaque client.</li><li>Stockage à l'abri de la lumière et de la chaleur.</li></ul>`},
+  {h:"Traçabilité", html:`<p>Noter couleurs et numéros de lot dans la fiche client.</p><p>Un effet indésirable se signale sur signalement-sante.gouv.fr.</p>`, key:"Indispensable en cas de réaction ou de rappel produit."}
+ ]},
+{ id:"dasri", title:"Déchets et DASRI", sub:"Filières, délais, documents",
+ cards:[
+  {h:"Qu'est-ce qu'un DASRI ?", html:`<p>Déchet d'activité de soins à risque infectieux : tout déchet souillé de sang ou piquant/coupant.</p>`, key:"Le tatoueur en est responsable jusqu'à l'élimination finale."},
+  {h:"Les filières", html:`<table><tr><td>Piquants / coupants</td><td>Collecteur rigide jaune NF X 30-500, fermé aux 3/4</td></tr><tr><td>DASRI mous</td><td>Sac ou carton jaune, pictogramme danger biologique</td></tr><tr><td>Non souillés</td><td>Sac noir classique</td></tr></table>`},
+  {h:"Délais de stockage", html:`<table><tr><td>≤ 5 kg / mois</td><td>3 mois</td></tr><tr><td>5 à 15 kg / mois</td><td>1 mois</td></tr><tr><td>> 15 kg / mois</td><td>7 jours</td></tr><tr><td>> 100 kg / semaine</td><td>72 heures</td></tr></table>`, key:"Un salon produit en général moins de 5 kg par mois : 3 mois."},
+  {h:"Documents", html:`<ul><li>Convention écrite avec un prestataire agréé.</li><li>Bons de prise en charge ou bordereaux Cerfa, conservés <b>3 ans</b>.</li></ul>`},
+  {h:"Règles d'or", html:`<ul><li>Jamais d'aiguille recapuchonnée.</li><li>Jamais d'aiguille dans un sac.</li><li>Collecteur stable, à portée de main.</li><li>Stockage dans une zone dédiée, hors du public.</li></ul>`}
+ ]},
+{ id:"aes", title:"Accident d'exposition au sang", sub:"Les gestes et les délais",
+ cards:[
+  {h:"Définition", html:`<p>Piqûre, coupure ou projection de sang sur une muqueuse (yeux, bouche) ou sur une peau lésée.</p>`},
+  {h:"Piqûre ou coupure", html:`<ol><li>Ne <b>pas</b> faire saigner.</li><li>Laver à l'eau et au savon, rincer.</li><li>Tremper <b>5 minutes minimum</b> : Dakin, Javel diluée à 0,1 %, ou alcool à 70°.</li></ol>`},
+  {h:"Projection yeux ou bouche", html:`<p>Rincer abondamment au sérum physiologique ou à l'eau pendant au moins 5 minutes.</p>`},
+  {h:"Ensuite", html:`<ul><li>Urgences ou médecin référent AES, idéalement <b>dans les 4 heures</b>, au plus tard 48 h.</li><li>Proposer au client un dépistage VIH, VHB, VHC.</li><li>Déclarer et consigner l'accident.</li><li>Suivi sérologique prescrit.</li></ul>`, key:"Protocole AES affiché dans le salon, avec le numéro des urgences."}
+ ]},
+{ id:"client", title:"Client, mineurs, soins", sub:"Information, contre-indications",
+ cards:[
+  {h:"Information obligatoire", html:`<p>Affichée et remise par écrit avant l'acte :</p><ul><li>caractère irréversible, douleur possible ;</li><li>risques : infection, allergie, cicatrisation anormale ;</li><li>soins après l'acte et durée de cicatrisation.</li></ul>`},
+  {h:"Les mineurs", html:`<p>Consentement écrit d'un titulaire de l'autorité parentale ou du tuteur.</p>`, key:"Le consentement se conserve 3 ans."},
+  {h:"Contre-indications", html:`<ul><li>Peau lésée, infectée, grain de beauté sur la zone.</li><li>Grossesse, allaitement : report conseillé.</li><li>Diabète mal équilibré, troubles de la coagulation, anticoagulants, immunodépression : avis médical.</li><li>Allergies connues.</li><li>Alcool ou drogue : refus.</li></ul>`},
+  {h:"Soins à transmettre", html:`<ul><li>Mains lavées avant de toucher.</li><li>Savon neutre, crème en fine couche.</li><li>Pas de bain, piscine, mer, hammam ni soleil pendant environ 3 semaines.</li><li>Ne pas gratter les croûtes.</li><li>Consulter si rougeur qui s'étend, chaleur, pus ou fièvre.</li></ul>`}
+ ]},
+{ id:"peau", title:"La peau et la cicatrisation", sub:"Couches, encre, complications",
+ cards:[
+  {h:"Les 3 couches", html:`<table><tr><td>Épiderme</td><td>Couche superficielle, se renouvelle en 3 à 4 semaines</td></tr><tr><td>Derme</td><td>Vaisseaux, nerfs, fibres : c'est là que l'encre reste</td></tr><tr><td>Hypoderme</td><td>Couche graisseuse profonde</td></tr></table>`, key:"L'encre doit être déposée dans le derme : trop haut elle part, trop bas elle bave."},
+  {h:"La barrière cutanée", html:`<p>La peau protège contre les germes. Le tatouage crée une plaie : la barrière est ouverte jusqu'à cicatrisation.</p><p>D'où l'asepsie pendant l'acte et les soins après.</p>`},
+  {h:"Les phases de cicatrisation", html:`<ol><li><b>Inflammation</b> (0 à 3 jours) : rougeur, chaleur, gonflement léger, suintement.</li><li><b>Réparation</b> (jusqu'à 2–3 semaines) : peau qui pèle, croûtes fines, démangeaisons.</li><li><b>Maturation</b> (plusieurs semaines à mois) : la peau se reconstitue en profondeur.</li></ol>`},
+  {h:"Complications à reconnaître", html:`<ul><li><b>Infection</b> : rougeur qui s'étend, chaleur, pus, fièvre → médecin.</li><li><b>Allergie</b> : souvent aux pigments rouges, parfois des mois après.</li><li><b>Granulome</b> : petite boule inflammatoire autour du pigment.</li><li><b>Cicatrice chéloïde</b> : relief qui déborde, terrain prédisposé.</li></ul>`, key:"Une inflammation normale diminue après 3 jours. Une infection s'aggrave."}
+ ]}
+];
+
+// type: "qcm" (choix multiples) ou "open" (question à réponse libre, auto-évaluée)
+const QUESTIONS = [
+ {c:"reglementation",t:"qcm",q:"Quelle est la durée minimale de la formation hygiène et salubrité ?",o:["7 heures","14 heures","21 heures","35 heures"],a:2,e:"21 heures sur 3 jours minimum (arrêté du 12 décembre 2008)."},
+ {c:"reglementation",t:"qcm",q:"Auprès de quel organisme déclare-t-on son activité de tatoueur ?",o:["La mairie","L'ARS","La CPAM","La Chambre des métiers"],a:1,e:"Déclaration à l'ARS du lieu d'exercice, pour chaque lieu."},
+ {c:"reglementation",t:"qcm",q:"Pour tatouer en convention, faut-il une déclaration ?",o:["Non, jamais","Oui, pour le lieu de la convention","Seulement à l'étranger","Seulement au-delà de 3 jours"],a:1,e:"Chaque lieu d'exercice se déclare, conventions et guests compris."},
+ {c:"reglementation",t:"open",q:"Cite les trois obligations d'un tatoueur.",a:"Déclarer son activité à l'ARS, suivre la formation hygiène de 21 h, respecter les bonnes pratiques d'hygiène."},
+ {c:"microbio",t:"qcm",q:"Combien de temps le VHB peut-il survivre hors du corps ?",o:["Quelques minutes","1 heure","Jusqu'à 7 jours","Il ne survit pas"],a:2,e:"Le VHB est très résistant dans l'environnement."},
+ {c:"microbio",t:"qcm",q:"Quel est l'agent le plus résistant aux désinfectants ?",o:["Le VIH","Les bactéries","Les spores","Les prions"],a:3,e:"Ordre : virus enveloppés < bactéries < champignons < virus nus < mycobactéries < spores < prions."},
+ {c:"microbio",t:"qcm",q:"L'antisepsie s'applique sur…",o:["Un tissu vivant","Une surface","Un instrument","Le sol"],a:0,e:"Antisepsie = peau ; désinfection = objet ou surface."},
+ {c:"microbio",t:"qcm",q:"La stérilisation détruit…",o:["La plupart des bactéries","Les virus uniquement","Tous les micro-organismes, spores comprises","Les odeurs"],a:2,e:"C'est ce qui la distingue de la désinfection."},
+ {c:"microbio",t:"open",q:"Cite les 4 maillons de la chaîne de transmission.",a:"Réservoir, mode de transmission, porte d'entrée, hôte réceptif."},
+ {c:"mains",t:"qcm",q:"Combien de temps dure une friction hydroalcoolique ?",o:["5 secondes","10 secondes","30 secondes, jusqu'à séchage","2 minutes"],a:2,e:"30 secondes minimum, jusqu'à ce que les mains soient sèches."},
+ {c:"mains",t:"qcm",q:"Quand faut-il faire une friction hydroalcoolique ?",o:["Seulement en arrivant","Avant de mettre les gants et après les avoir retirés","Jamais si on porte des gants","Une fois par jour"],a:1,e:"Les gants ne remplacent pas l'hygiène des mains."},
+ {c:"mains",t:"qcm",q:"Lequel est autorisé pendant un tatouage ?",o:["Une alliance","Une montre","Du vernis","Aucun des trois"],a:3,e:"Ongles courts, sans vernis, aucun bijou aux mains et poignets."},
+ {c:"mains",t:"qcm",q:"Tu touches ton téléphone avec tes gants pendant l'acte. Que fais-tu ?",o:["Je continue","Je passe du SHA sur les gants","Je change de gants après une friction des mains","J'essuie les gants"],a:2,e:"Gants changés dès qu'ils touchent une surface non protégée."},
+ {c:"locaux",t:"qcm",q:"Quelle norme indique qu'un désinfectant est virucide ?",o:["EN 1500","EN 14476","EN 13727","NF X 30-500"],a:1,e:"EN 14476 = virucide ; EN 13727 = bactéricide ; EN 1500 = friction des mains."},
+ {c:"locaux",t:"qcm",q:"La marche en avant, c'est…",o:["Du sale vers le propre","Du propre vers le sale, sans retour","Travailler debout","Nettoyer le sol en premier"],a:1,e:"Le sale ne croise jamais le stérile."},
+ {c:"locaux",t:"qcm",q:"Dans quel sens nettoie-t-on ?",o:["Du bas vers le haut","Du haut vers le bas, du propre au sale","Au hasard","Du sale au propre"],a:1,e:"On ne recontamine pas ce qu'on vient de nettoyer."},
+ {c:"locaux",t:"open",q:"Que désinfectes-tu entre deux clients ?",a:"Fauteuil, accoudoir, plan de travail, lampe, machine ; et on remet de nouvelles protections plastiques à usage unique."},
+ {c:"sterilisation",t:"qcm",q:"Quel est le cycle autoclave de référence ?",o:["121 °C pendant 5 min","134 °C pendant 18 min","100 °C pendant 30 min","180 °C pendant 1 h"],a:1,e:"Cycle prion : 134 °C, 18 minutes, autoclave classe B."},
+ {c:"sterilisation",t:"qcm",q:"Quel autoclave faut-il pour des objets creux emballés ?",o:["Classe N","Classe S","Classe B","Peu importe"],a:2,e:"La classe B (vide fractionné) est la seule adaptée."},
+ {c:"sterilisation",t:"qcm",q:"Le stérilisateur à billes est-il accepté ?",o:["Oui","Oui pour les grips","Non","Seulement en convention"],a:2,e:"Billes, Poupinel, UV et trempage seul ne valent pas stérilisation."},
+ {c:"sterilisation",t:"qcm",q:"Que vérifie le test de Bowie-Dick ?",o:["La température de la pièce","La pénétration de la vapeur","La date de péremption","Le poids des déchets"],a:1,e:"Il contrôle que la vapeur pénètre bien la charge."},
+ {c:"sterilisation",t:"open",q:"Cite dans l'ordre les étapes du traitement du matériel réutilisable.",a:"Pré-désinfection, nettoyage, rinçage, séchage, conditionnement, stérilisation, contrôle et traçabilité, stockage."},
+ {c:"seance",t:"qcm",q:"Quelle est la bonne préparation cutanée ?",o:["Antisepsie seule","Détersion, rinçage, séchage, antisepsie","Alcool puis rasage","Rasage puis crème"],a:1,e:"Les 4 temps, avec des produits de la même gamme."},
+ {c:"seance",t:"qcm",q:"Peut-on enchaîner chlorhexidine puis povidone iodée ?",o:["Oui","Non, jamais deux familles différentes","Oui si on rince","Seulement sur le dos"],a:1,e:"On reste dans une seule famille d'antiseptique."},
+ {c:"seance",t:"qcm",q:"Comment prélever la vaseline ?",o:["Avec le doigt ganté dans le pot","Avec une spatule ou dans un godet","Directement sur la peau depuis le tube ouvert à chaque client","Peu importe"],a:1,e:"On ne retourne jamais dans le pot avec un gant contaminé."},
+ {c:"seance",t:"qcm",q:"Quand raser la zone ?",o:["Après l'antisepsie","Avant l'antisepsie","Pendant le tatouage","Jamais"],a:1,e:"Rasoir à usage unique, avant l'antisepsie."},
+ {c:"encres",t:"qcm",q:"Depuis quand la restriction REACH sur les encres s'applique-t-elle ?",o:["2008","2015","Janvier 2022","2025"],a:2,e:"Règlement UE 2020/2081, en vigueur depuis le 4 janvier 2022."},
+ {c:"encres",t:"qcm",q:"Avec quoi dilue-t-on une encre ?",o:["L'eau du robinet","De l'eau stérile ou le diluant du fabricant","De l'alcool","De la vaseline"],a:1,e:"Jamais d'eau du robinet."},
+ {c:"encres",t:"qcm",q:"Il reste de l'encre dans un godet à la fin. Que fais-tu ?",o:["Je la garde pour le client suivant","Je la reverse dans le flacon","Je jette le godet en DASRI","Je la mets au frigo"],a:2,e:"Godets à usage unique, jetés après chaque client."},
+ {c:"encres",t:"open",q:"Pourquoi noter les numéros de lot des encres dans la fiche client ?",a:"Pour la traçabilité : en cas de réaction du client ou de rappel d'un produit."},
+ {c:"dasri",t:"qcm",q:"Dans quoi jettes-tu une aiguille ?",o:["Sac jaune","Collecteur rigide jaune NF X 30-500","Poubelle noire","Bouteille plastique"],a:1,e:"Les piquants vont toujours dans un collecteur rigide."},
+ {c:"dasri",t:"qcm",q:"Délai de stockage maximum si tu produis moins de 5 kg de DASRI par mois ?",o:["72 heures","7 jours","1 mois","3 mois"],a:3,e:"≤ 5 kg/mois : 3 mois. 5–15 kg : 1 mois. > 15 kg : 7 jours."},
+ {c:"dasri",t:"qcm",q:"Combien de temps conserver les bordereaux DASRI ?",o:["6 mois","1 an","3 ans","10 ans"],a:2,e:"3 ans."},
+ {c:"dasri",t:"qcm",q:"Quand fermer définitivement un collecteur ?",o:["Quand il déborde","Au remplissage des 3/4","Chaque soir","Jamais"],a:1,e:"Au repère de remplissage, environ aux 3/4."},
+ {c:"dasri",t:"open",q:"Quels documents dois-tu avoir pour tes DASRI ?",a:"Une convention écrite avec un prestataire agréé et les bons de prise en charge ou bordereaux, conservés 3 ans."},
+ {c:"aes",t:"qcm",q:"Tu te piques avec une aiguille souillée. Premier geste ?",o:["Faire saigner","Ne pas faire saigner, laver à l'eau et au savon","Mettre un pansement","Continuer le tatouage"],a:1,e:"Ne pas faire saigner, laver, rincer, puis désinfecter."},
+ {c:"aes",t:"qcm",q:"Combien de temps laisser agir l'antiseptique après un AES ?",o:["30 secondes","1 minute","5 minutes minimum","1 heure"],a:2,e:"Trempage 5 minutes minimum (Dakin, Javel 0,1 % ou alcool 70°)."},
+ {c:"aes",t:"qcm",q:"Dans quel délai consulter idéalement après un AES ?",o:["Dans les 4 heures","Dans la semaine","Dans le mois","Inutile"],a:0,e:"Un traitement post-exposition est plus efficace s'il commence dans les 4 h (au plus tard 48 h)."},
+ {c:"aes",t:"open",q:"Que fais-tu en cas de projection de sang dans l'œil ?",a:"Rincer abondamment au sérum physiologique ou à l'eau pendant au moins 5 minutes, puis consulter."},
+ {c:"client",t:"qcm",q:"Pour tatouer un mineur, il faut…",o:["Rien de plus","Une pièce d'identité","Le consentement écrit d'un parent ou du tuteur","L'accord de l'ARS"],a:2,e:"Consentement écrit conservé 3 ans."},
+ {c:"client",t:"qcm",q:"Un client arrive alcoolisé. Que fais-tu ?",o:["Je tatoue","Je refuse l'acte","Je tatoue une petite pièce","Je lui donne de l'eau et je commence"],a:1,e:"Alcool ou drogue : refus."},
+ {c:"client",t:"qcm",q:"Pendant combien de temps éviter piscine, mer et soleil ?",o:["24 heures","3 jours","Environ 3 semaines","6 mois"],a:2,e:"Le temps de la cicatrisation, environ 3 semaines."},
+ {c:"client",t:"open",q:"Que doit contenir l'information écrite remise au client ?",a:"Le caractère irréversible et la douleur possible, les risques (infection, allergie, cicatrisation), les soins après l'acte et la durée de cicatrisation."},
+ {c:"peau",t:"qcm",q:"Dans quelle couche l'encre doit-elle être déposée ?",o:["L'épiderme","Le derme","L'hypoderme","Le muscle"],a:1,e:"Trop superficiel, l'encre part avec l'épiderme ; trop profond, elle diffuse."},
+ {c:"peau",t:"qcm",q:"En combien de temps l'épiderme se renouvelle-t-il ?",o:["24 heures","3 à 4 semaines","6 mois","Jamais"],a:1,e:"Environ 3 à 4 semaines."},
+ {c:"peau",t:"qcm",q:"Quel signe évoque une infection plutôt qu'une inflammation normale ?",o:["Rougeur légère le premier jour","Peau qui pèle","Rougeur qui s'étend avec pus et fièvre","Démangeaisons"],a:2,e:"L'inflammation normale diminue après 3 jours ; l'infection s'aggrave."},
+ {c:"peau",t:"open",q:"Cite les 3 phases de la cicatrisation.",a:"Inflammation, réparation (ou bourgeonnement), maturation (ou remodelage)."}
+];
+
+
+
+const ICONS = {
+ reglementation:'<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4M9 12h7M9 16h5"/>',
+ microbio:'<circle cx="12" cy="12" r="5"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/>',
+ mains:'<path d="M8 13V5.5a1.5 1.5 0 0 1 3 0V11M11 10V4.5a1.5 1.5 0 0 1 3 0V11M14 10.5V6a1.5 1.5 0 0 1 3 0v8a6 6 0 0 1-6 6h-1a6 6 0 0 1-5-2.7L3.3 14a1.5 1.5 0 0 1 2.4-1.8L8 15"/>',
+ locaux:'<path d="M4 20V10l8-6 8 6v10z"/><path d="M10 20v-6h4v6"/>',
+ sterilisation:'<rect x="4" y="6" width="16" height="14" rx="3"/><path d="M8 6V4h8v2M9 13h6M12 10v6"/>',
+ seance:'<path d="M14 4l6 6-9 9H5v-6z"/><path d="M12 6l6 6"/>',
+ encres:'<path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',
+ dasri:'<path d="M5 7h14l-1.5 13h-11z"/><path d="M9 7V4h6v3M3 7h18"/>',
+ aes:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>',
+ client:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ peau:'<path d="M3 8c3-2 6 2 9 0s6-2 9 0M3 13c3-2 6 2 9 0s6-2 9 0M3 18c3-2 6 2 9 0s6-2 9 0"/>'
+};
+const svg = (p,s=22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const I = {
+ home:'<path d="M4 11l8-7 8 7v9h-5v-6h-6v6H4z"/>',
+ book:'<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>',
+ quiz:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6M12 17h.01"/>',
+ chart:'<path d="M5 20V10M12 20V4M19 20v-7"/>',
+ play:'<path d="M8 5l11 7-11 7z" fill="currentColor"/>',
+ right:'<path d="M9 6l6 6-6 6"/>', left:'<path d="M15 18l-6-6 6-6"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', check:'<path d="M5 12l5 5 9-10"/>'
+};
+// étoile dorée à 8 branches (logo)
+let starN=0;
+function star(size=26){
+  const id="sg"+(starN++);
+  const pts=[];const R=50,r=7,R2=31;
+  for(let k=0;k<16;k++){const a=-Math.PI/2+k*Math.PI/8;const rad=k%2?r:(k%4===0?R:R2);pts.push((50+rad*Math.cos(a)).toFixed(1)+","+(50+rad*Math.sin(a)).toFixed(1))}
+  return `<svg class="star" width="${size}" height="${size}" viewBox="0 0 100 100" aria-hidden="true"><defs><radialGradient id="${id}" cx="50%" cy="50%" r="55%"><stop offset="0" stop-color="#f3d36a"/><stop offset=".55" stop-color="#e6b325"/><stop offset="1" stop-color="#a8740f"/></radialGradient></defs><polygon points="${pts.join(" ")}" fill="url(#${id})"/></svg>`;
+}
+
+const store = {
+  get(){ try{ return JSON.parse(localStorage.getItem("hyg-progress")||"{}") }catch(e){ return {} } },
+  set(v){ try{ localStorage.setItem("hyg-progress",JSON.stringify(v)) }catch(e){} }
+};
+let progress = store.get();
+progress.done = progress.done || {};
+progress.scores = progress.scores || []; // [{p:pct,d:"jj/mm"}]
+
+const app = document.getElementById("app");
+const tabs = document.getElementById("tabs");
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a };
+const doneCount = () => COURSES.filter(c=>progress.done[c.id]).length;
+const best = () => progress.scores.length?Math.max(...progress.scores.map(s=>s.p)):null;
+
+function setTabs(active){
+  tabs.innerHTML = `
+   <button class="tab" data-t="home" ${active==="home"?'aria-current="page"':''}>${svg(I.home)}Accueil</button>
+   <button class="tab" data-t="courses" ${active==="courses"?'aria-current="page"':''}>${svg(I.book)}Cours</button>
+   <button class="tab center" data-t="quick" aria-label="Série rapide de 15 questions">${svg(I.play,24)}</button>
+   <button class="tab" data-t="exam" ${active==="exam"?'aria-current="page"':''}>${svg(I.quiz)}Examen</button>
+   <button class="tab" data-t="stats" ${active==="stats"?'aria-current="page"':''}>${svg(I.chart)}Scores</button>`;
+  tabs.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{
+    const t=b.dataset.t;
+    if(t==="home")home(); else if(t==="courses")courses(); else if(t==="exam")examTab(); else if(t==="stats")stats();
+    else quiz(shuffle(QUESTIONS).slice(0,15),"Série rapide");
+  });
+}
+
+function ringSVG(pct){
+  const r=56,c=2*Math.PI*r,off=c*(1-pct/100);
+  return `<svg width="132" height="132" viewBox="0 0 132 132" aria-hidden="true"><defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3d36a"/><stop offset="1" stop-color="#a8740f"/></linearGradient></defs>
+  <circle cx="66" cy="66" r="${r}" fill="none" stroke="#1c1c1f" stroke-width="10"/>
+  <circle cx="66" cy="66" r="${r}" fill="none" stroke="url(#rg)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 66 66)"/></svg>`;
+}
+
+function barsHTML(){
+  const last=progress.scores.slice(-7);
+  if(!last.length) return `<p class="empty">Aucun examen passé pour l'instant. Ton premier score apparaîtra ici.</p>`;
+  return `<div class="bars">${last.map((s,i)=>`<div class="b ${s.p>=80?'on':''} ${i===last.length-1?'last':''}"><span>${s.p}%</span><i style="height:${Math.max(6,s.p*0.7)}px"></i><span>${esc(s.d)}</span></div>`).join("")}</div>`;
+}
+
+function courseRow(c,i){
+  const d=progress.done[c.id];
+  return `<li><button class="course ${d?'done':''}" data-c="${i}">
+    <span class="ic">${svg(ICONS[c.id]||I.book)}</span>
+    <span class="meta"><span class="name">${esc(c.title)}</span><span class="sub">${esc(c.sub)} · ${c.cards.length} fiches</span></span>
+    <span class="state">${d?'Révisé':'À faire'}</span>
+  </button></li>`;
+}
+const bindCourses = () => app.querySelectorAll(".course").forEach(b=>b.onclick=()=>course(+b.dataset.c));
+
+/* --- Accueil --- */
+function home(){
+  setTabs("home");
+  const n=doneCount(), pct=Math.round(n/COURSES.length*100);
+  const h=new Date().getHours();
+  const hello = h<5||h>=18?"Bonsoir":"Bonjour";
+  const nextI = COURSES.findIndex(c=>!progress.done[c.id]);
+  const b=best();
+  app.innerHTML = `
+  <header class="topbar">
+    <span class="logo">${star(26)}</span>
+    <div class="who"><p>${hello}</p><h2>Révision hygiène</h2></div>
+  </header>
+  <section class="panel hero-card">
+    <div class="ring">${ringSVG(pct)}<div class="val"><b>${pct}<span style="font-size:18px">%</span></b><small>révisé</small></div></div>
+    <div class="txt"><span class="label">Formation 21 h</span><h3>${n===COURSES.length?"Tous les cours sont révisés":n===0?"On commence ?":"Tu avances bien"}</h3><p>${n} cours sur ${COURSES.length}${b!=null?` · meilleur examen ${b} %`:''}</p></div>
+  </section>
+  <div class="tiles">
+    <div class="tile hl"><b>${n}/${COURSES.length}</b><span>Cours révisés</span></div>
+    <div class="tile"><b>${b!=null?b+'%':'—'}</b><span>Meilleur score</span></div>
+    <div class="tile"><b>${QUESTIONS.length}</b><span>Questions</span></div>
+  </div>
+  ${nextI>=0?`<section class="panel resume">
+    <span class="course" style="all:unset"><span class="ic" style="width:46px;height:46px;border-radius:14px;background:var(--surface-2);display:grid;place-items:center;color:var(--gold)">${svg(ICONS[COURSES[nextI].id])}</span></span>
+    <div class="txt"><span class="label">Continuer</span><h3>${esc(COURSES[nextI].title)}</h3><p>${COURSES[nextI].cards.length} fiches à swiper</p></div>
+    <button class="go" id="resume" aria-label="Ouvrir le cours">${svg(I.arrow)}</button>
+  </section>`:`<section class="panel resume"><div class="txt"><span class="label">Prêt</span><h3>Passe l'examen blanc</h3><p>${QUESTIONS.length} questions corrigées</p></div><button class="go" id="resume" aria-label="Lancer l'examen">${svg(I.play)}</button></section>`}
+  <section class="panel">
+    <div class="sechead"><h3>Mes derniers examens</h3><button id="see">Voir tout</button></div>
+    ${barsHTML()}
+  </section>
+  <div class="sechead"><h3>Cours</h3><button id="all">Tous les cours</button></div>
+  <ul class="list">${COURSES.slice(0,3).map((c,i)=>courseRow(c,i)).join("")}</ul>`;
+  bindCourses();
+  document.getElementById("resume").onclick=()=> nextI>=0?course(nextI):quiz(QUESTIONS,"Examen blanc");
+  document.getElementById("see").onclick=stats;
+  document.getElementById("all").onclick=()=>courses();
+  window.scrollTo(0,0);
+}
+
+/* --- Liste des cours --- */
+function courses(filter="all"){
+  setTabs("courses");
+  const list=COURSES.map((c,i)=>({c,i})).filter(({c})=>filter==="all"||(filter==="todo"?!progress.done[c.id]:progress.done[c.id]));
+  app.innerHTML = `
+  <header class="topbar"><span class="logo">${star(22)}</span><div class="who"><p>${doneCount()} sur ${COURSES.length} révisés</p><h2>Les cours</h2></div></header>
+  <div class="pills" role="group" aria-label="Filtrer">
+    <button class="pill" data-f="all" aria-pressed="${filter==="all"}">Tous · ${COURSES.length}</button>
+    <button class="pill" data-f="todo" aria-pressed="${filter==="todo"}">À réviser · ${COURSES.length-doneCount()}</button>
+    <button class="pill" data-f="done" aria-pressed="${filter==="done"}">Révisés · ${doneCount()}</button>
+  </div>
+  ${list.length?`<ul class="list">${list.map(({c,i})=>courseRow(c,i)).join("")}</ul>`:`<p class="empty">${filter==="done"?"Aucun cours révisé pour l'instant. Ouvre un cours et va jusqu'à la dernière fiche.":"Tout est révisé. Passe à l'examen blanc."}</p>`}`;
+  app.querySelectorAll(".pill").forEach(b=>b.onclick=()=>courses(b.dataset.f));
+  bindCourses();
+  window.scrollTo(0,0);
+}
+
+/* --- Fiches swipe --- */
+function course(i){
+  setTabs("courses");
+  const c=COURSES[i], total=c.cards.length+1;
+  app.innerHTML = `
+  <header class="topbar">
+    <button class="iconbtn" id="back" aria-label="Retour aux cours">${svg(I.left)}</button>
+    <div class="who"><p>Cours ${i+1} / ${COURSES.length}</p><h2>${esc(c.title)}</h2></div>
+  </header>
+  <div class="deck" id="deck" tabindex="0" aria-label="Fiches, glisser pour changer">
+    ${c.cards.map((k,j)=>`<article class="card">
+      <span class="corner">${star(150)}</span>
+      <span class="label">Fiche ${j+1} / ${c.cards.length}</span>
+      <h3>${k.h}</h3>${k.html}
+      ${k.key?`<div class="key"><b>${star(12)}À retenir</b>${k.key}</div>`:''}
+    </article>`).join("")}
+    <article class="card end">
+      ${star(64)}
+      <span class="label">Fin du cours</span>
+      <h3>${esc(c.title)} : révisé</h3>
+      <p class="explain">Teste-toi sur ce cours ou enchaîne avec le suivant.</p>
+      <div class="row" style="width:100%">
+        <button class="btn" id="mini">Quiz du cours</button>
+        ${i<COURSES.length-1?`<button class="btn dark" id="next-c">Cours suivant</button>`:`<button class="btn dark" id="to-exam">Examen blanc</button>`}
+      </div>
+    </article>
+  </div>
+  <div class="pager">
+    <button class="nav" id="prev" aria-label="Fiche précédente">${svg(I.left)}</button>
+    <div class="dots" id="dots">${Array.from({length:total},()=>'<i></i>').join("")}</div>
+    <button class="nav primary" id="next" aria-label="Fiche suivante">${svg(I.right)}</button>
+  </div>
+  <p class="explain" style="text-align:center">Glisse vers la gauche pour avancer</p>`;
+  const deck=document.getElementById("deck"), dots=[...document.querySelectorAll("#dots i")];
+  const prev=document.getElementById("prev"), next=document.getElementById("next");
+  let idx=0;
+  const step=()=>deck.clientWidth+12;
+  const go=n=>deck.scrollTo({left:n*step(),behavior:"smooth"});
+  const update=()=>{
+    idx=Math.round(deck.scrollLeft/step());
+    dots.forEach((d,j)=>d.classList.toggle("on",j===idx));
+    prev.disabled=idx===0; next.disabled=idx===total-1;
+    if(idx===total-1&&!progress.done[c.id]){progress.done[c.id]=true;store.set(progress)}
+  };
+  deck.addEventListener("scroll",()=>requestAnimationFrame(update),{passive:true});
+  prev.onclick=()=>go(Math.max(0,idx-1)); next.onclick=()=>go(Math.min(total-1,idx+1));
+  deck.addEventListener("keydown",e=>{if(e.key==="ArrowRight")next.click();if(e.key==="ArrowLeft")prev.click()});
+  update();
+  document.getElementById("back").onclick=()=>courses();
+  document.getElementById("mini").onclick=()=>quiz(QUESTIONS.filter(q=>q.c===c.id),c.title,()=>course(i));
+  const nc=document.getElementById("next-c"); if(nc) nc.onclick=()=>course(i+1);
+  const te=document.getElementById("to-exam"); if(te) te.onclick=()=>quiz(QUESTIONS,"Examen blanc");
+  window.scrollTo(0,0);
+}
+
+/* --- Onglet examen --- */
+function examTab(){
+  setTabs("exam");
+  const nq=QUESTIONS.filter(q=>q.t==="qcm").length;
+  app.innerHTML = `
+  <header class="topbar"><span class="logo">${star(22)}</span><div class="who"><p>Entraînement</p><h2>Examen blanc</h2></div></header>
+  <section class="panel exam">
+    <span class="label">Complet</span>
+    <h3>Les ${QUESTIONS.length} questions</h3>
+    <p>${nq} QCM et ${QUESTIONS.length-nq} questions ouvertes, mélangés, corrigés après chaque réponse.</p>
+    <div class="play"><button class="go" id="full" aria-label="Lancer l'examen complet">${svg(I.play,26)}</button><span class="explain">Environ 15 minutes</span></div>
+  </section>
+  <section class="panel resume">
+    <div class="txt"><span class="label">Rapide</span><h3>Série de 15 questions</h3><p>Tirées au hasard dans tous les cours</p></div>
+    <button class="go" id="quick" aria-label="Lancer la série rapide">${svg(I.play)}</button>
+  </section>
+  <div class="sechead"><h3>Quiz par cours</h3></div>
+  <div class="pills" style="flex-wrap:wrap">${COURSES.map((c,i)=>`<button class="pill" data-c="${i}">${esc(c.title)}</button>`).join("")}</div>`;
+  document.getElementById("full").onclick=()=>quiz(QUESTIONS,"Examen blanc");
+  document.getElementById("quick").onclick=()=>quiz(shuffle(QUESTIONS).slice(0,15),"Série rapide");
+  app.querySelectorAll(".pill").forEach(b=>b.onclick=()=>{const c=COURSES[+b.dataset.c];quiz(QUESTIONS.filter(q=>q.c===c.id),c.title,examTab)});
+  window.scrollTo(0,0);
+}
+
+/* --- Scores --- */
+function stats(){
+  setTabs("stats");
+  const s=progress.scores, b=best();
+  const avg=s.length?Math.round(s.reduce((a,x)=>a+x.p,0)/s.length):null;
+  app.innerHTML = `
+  <header class="topbar"><span class="logo">${star(22)}</span><div class="who"><p>Examen blanc complet</p><h2>Mes scores</h2></div></header>
+  <div class="tiles">
+    <div class="tile hl"><b>${b!=null?b+'%':'—'}</b><span>Meilleur</span></div>
+    <div class="tile"><b>${avg!=null?avg+'%':'—'}</b><span>Moyenne</span></div>
+    <div class="tile"><b>${s.length}</b><span>Examens</span></div>
+  </div>
+  <section class="panel"><div class="sechead"><h3>7 derniers</h3><span class="label">Or = 80 % et plus</span></div>${barsHTML()}</section>
+  <section class="panel resume"><div class="txt"><span class="label">Objectif</span><h3>80 % au moins deux fois</h3><p>C'est un bon signe que tu es prêt.</p></div><button class="go" id="go" aria-label="Lancer l'examen">${svg(I.play)}</button></section>`;
+  document.getElementById("go").onclick=()=>quiz(QUESTIONS,"Examen blanc");
+  window.scrollTo(0,0);
+}
+
+/* --- Quiz --- */
+function quiz(list,label,onBack){
+  const full = list===QUESTIONS;
+  const qs=shuffle(list).map(q=>{
+    if(q.t!=="qcm")return {...q};
+    const order=shuffle(q.o.map((t,k)=>({t,k})));
+    return {...q,o:order.map(x=>x.t),a:order.findIndex(x=>x.k===q.a)};
+  });
+  let n=0,score=0;const missed=[];
+  const back=onBack||examTab;
+  setTabs("exam");
+  function render(){
+    if(n>=qs.length)return result();
+    const q=qs[n];
+    app.innerHTML=`
+    <div class="qtop"><button class="iconbtn" id="back" aria-label="Quitter">${svg(I.left)}</button>
+      <div class="t"><span class="label">${esc(label)}</span><h2>Question ${n+1} sur ${qs.length}</h2></div>
+      <span class="tag g">${score} pt</span></div>
+    <div class="track"><i style="width:${n/qs.length*100}%"></i></div>
+    <section class="panel qbox">
+      <div class="tags"><span class="tag g">${q.t==="qcm"?"QCM":"Question ouverte"}</span><span class="tag">${esc(COURSES.find(c=>c.id===q.c).title)}</span></div>
+      <h3>${esc(q.q)}</h3>
+      <div id="zone"></div>
+    </section>`;
+    document.getElementById("back").onclick=back;
+    const zone=document.getElementById("zone");
+    if(q.t==="qcm"){
+      zone.innerHTML=`<div class="opts">${q.o.map((o,k)=>`<button class="opt" data-k="${k}"><span class="l">${"ABCD"[k]}</span><span>${esc(o)}</span></button>`).join("")}</div><div id="fb"></div>`;
+      zone.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{
+        const k=+b.dataset.k,ok=k===q.a;
+        zone.querySelectorAll(".opt").forEach((x,j)=>{x.disabled=true;if(j===q.a)x.classList.add("right")});
+        if(!ok){b.classList.add("wrong");missed.push(q)}else score++;
+        document.getElementById("fb").innerHTML=`<div style="display:flex;flex-direction:column;gap:12px;margin-top:6px">
+          <p class="verdict ${ok?'ok':'ko'}">${ok?"Bonne réponse":"Raté"}</p><p class="explain">${esc(q.e)}</p>
+          <button class="btn" id="nx">${n+1<qs.length?"Question suivante":"Voir mon score"}</button></div>`;
+        const nx=document.getElementById("nx");nx.onclick=()=>{n++;render()};nx.focus();
+      });
+    }else{
+      zone.innerHTML=`<p class="explain">Réponds dans ta tête ou à voix haute, puis compare.</p><button class="btn" id="rev">Voir la réponse</button>`;
+      document.getElementById("rev").onclick=()=>{
+        zone.innerHTML=`<div class="answer"><span class="label">Réponse attendue</span><p>${esc(q.a)}</p></div>
+          <p class="explain">Avais-tu l'essentiel ?</p>
+          <div class="row"><button class="btn good" id="y">Je savais</button><button class="btn bad" id="no">À revoir</button></div>`;
+        document.getElementById("y").onclick=()=>{score++;n++;render()};
+        document.getElementById("no").onclick=()=>{missed.push(q);n++;render()};
+      };
+    }
+    window.scrollTo(0,0);
+  }
+  function result(){
+    const pct=Math.round(score/qs.length*100);
+    if(full){const d=new Date();progress.scores.push({p:pct,d:String(d.getDate()).padStart(2,"0")+"/"+String(d.getMonth()+1).padStart(2,"0")});progress.scores=progress.scores.slice(-30);store.set(progress)}
+    const msg=pct>=80?"Tu es prêt pour la formation.":pct>=60?"Bonne base, revois les points ratés.":"Reprends les fiches des cours concernés.";
+    app.innerHTML=`
+    <div class="qtop"><button class="iconbtn" id="back" aria-label="Retour">${svg(I.left)}</button><div class="t"><span class="label">${esc(label)}</span><h2>Résultat</h2></div></div>
+    <section class="panel hero-card">
+      <div class="ring">${ringSVG(pct)}<div class="val"><b>${pct}<span style="font-size:18px">%</span></b><small>${score}/${qs.length}</small></div></div>
+      <div class="txt"><span class="label">${pct>=80?"Validé":"À retravailler"}</span><h3>${msg}</h3></div>
+    </section>
+    <div class="row"><button class="btn" id="again">Recommencer</button>${missed.length?`<button class="btn dark" id="retry">Refaire les ${missed.length} ratées</button>`:''}</div>
+    ${missed.length?`<div class="sechead"><h3>À revoir</h3></div><ul class="review">${missed.map(q=>`<li><b>${esc(q.q)}</b>${q.t==="qcm"?esc(q.o[q.a])+" · "+esc(q.e):esc(q.a)}</li>`).join("")}</ul>`:''}`;
+    document.getElementById("back").onclick=back;
+    document.getElementById("again").onclick=()=>quiz(list,label,onBack);
+    const r=document.getElementById("retry");if(r)r.onclick=()=>quiz(missed.map(m=>QUESTIONS.find(x=>x.q===m.q)),"Questions ratées",onBack);
+    window.scrollTo(0,0);
+  }
+  render();
+}
+home();
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+}
+</script>
+</body>
+</html>
