@@ -1,6 +1,6 @@
 // Garde l'appli en cache pour qu'elle marche sans connexion.
 // Change le numéro de version à chaque mise à jour de index.html.
-const CACHE = "hygiene-v5";
+const CACHE = "hygiene-v6";
 const FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "apple-touch-icon.png"];
 
 self.addEventListener("install", e => {
