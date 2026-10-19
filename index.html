@@ -35,13 +35,15 @@
   --tabbar:76px;
   color-scheme:dark;
 }
-html,body{height:100%;touch-action:manipulation;-webkit-text-size-adjust:100%}
+html{height:100%;box-sizing:border-box;overflow:hidden}
+html,body{touch-action:manipulation;-webkit-text-size-adjust:100%;overscroll-behavior:none}
 *{-webkit-tap-highlight-color:transparent}
 button,.deck,.card{touch-action:manipulation}
-body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.5;
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:16px;line-height:1.5;height:100%;overflow:hidden;display:flex;flex-direction:column;margin:0}
+.scroller{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
-.app{max-width:520px;margin:0 auto;padding-block:18px calc(var(--tabbar) + 28px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:18px;box-sizing:border-box}
+.app{max-width:520px;margin:0 auto;padding-block:18px 24px;display:flex;flex-direction:column;gap:18px;box-sizing:border-box}
 h1,h2,h3{margin:0;line-height:1.15;text-wrap:balance;font-weight:800;letter-spacing:-.01em}
 p{margin:0}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
@@ -179,8 +181,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-rad
 .review li b{display:block;margin-bottom:4px;font-size:15px;color:var(--ink)}
 
 /* Barre d'onglets */
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
-  background:linear-gradient(180deg,transparent,var(--bg) 35%)}
+.tabbar{flex:none;position:relative;z-index:20;padding:30px max(16px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));background:var(--bg)}
 .tabbar nav{max-width:520px;margin:0 auto;height:var(--tabbar);box-sizing:border-box;background:var(--surface);border:1px solid var(--line);border-radius:28px;display:grid;grid-template-columns:1fr 1fr auto 1fr 1fr;align-items:center;padding:0 8px}
 .tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--muted);padding-block:6px}
 .tab[aria-current="page"]{color:var(--gold)}
@@ -190,7 +191,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-rad
 
 </head>
 <body>
-<div class="app" id="app"></div>
+<div class="scroller" id="scroller"><div class="app" id="app"></div></div>
 <div class="tabbar"><nav id="tabs" aria-label="Navigation"></nav></div>
 
 <script>
@@ -374,6 +375,8 @@ progress.scores = progress.scores || []; // [{p:pct,d:"jj/mm"}]
 
 const app = document.getElementById("app");
 const tabs = document.getElementById("tabs");
+const scroller = document.getElementById("scroller");
+const toTop = () => { scroller.scrollTop = 0 };
 const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const shuffle = a => { a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]} return a };
 const doneCount = () => COURSES.filter(c=>progress.done[c.id]).length;
@@ -453,7 +456,7 @@ function home(){
   document.getElementById("resume").onclick=()=> nextI>=0?course(nextI):quiz(QUESTIONS,"Examen blanc");
   document.getElementById("see").onclick=stats;
   document.getElementById("all").onclick=()=>courses();
-  window.scrollTo(0,0);
+  toTop();
 }
 
 /* --- Liste des cours --- */
@@ -470,7 +473,7 @@ function courses(filter="all"){
   ${list.length?`<ul class="list">${list.map(({c,i})=>courseRow(c,i)).join("")}</ul>`:`<p class="empty">${filter==="done"?"Aucun cours révisé pour l'instant. Ouvre un cours et va jusqu'à la dernière fiche.":"Tout est révisé. Passe à l'examen blanc."}</p>`}`;
   app.querySelectorAll(".pill").forEach(b=>b.onclick=()=>courses(b.dataset.f));
   bindCourses();
-  window.scrollTo(0,0);
+  toTop();
 }
 
 /* --- Fiches swipe --- */
@@ -525,7 +528,7 @@ function course(i){
   document.getElementById("mini").onclick=()=>quiz(QUESTIONS.filter(q=>q.c===c.id),c.title,()=>course(i));
   const nc=document.getElementById("next-c"); if(nc) nc.onclick=()=>course(i+1);
   const te=document.getElementById("to-exam"); if(te) te.onclick=()=>quiz(QUESTIONS,"Examen blanc");
-  window.scrollTo(0,0);
+  toTop();
 }
 
 /* --- Onglet examen --- */
@@ -549,7 +552,7 @@ function examTab(){
   document.getElementById("full").onclick=()=>quiz(QUESTIONS,"Examen blanc");
   document.getElementById("quick").onclick=()=>quiz(shuffle(QUESTIONS).slice(0,15),"Série rapide");
   app.querySelectorAll(".pill").forEach(b=>b.onclick=()=>{const c=COURSES[+b.dataset.c];quiz(QUESTIONS.filter(q=>q.c===c.id),c.title,examTab)});
-  window.scrollTo(0,0);
+  toTop();
 }
 
 /* --- Scores --- */
@@ -567,7 +570,7 @@ function stats(){
   <section class="panel"><div class="sechead"><h3>7 derniers</h3><span class="label">Or = 80 % et plus</span></div>${barsHTML()}</section>
   <section class="panel resume"><div class="txt"><span class="label">Objectif</span><h3>80 % au moins deux fois</h3><p>C'est un bon signe que tu es prêt.</p></div><button class="go" id="go" aria-label="Lancer l'examen">${svg(I.play)}</button></section>`;
   document.getElementById("go").onclick=()=>quiz(QUESTIONS,"Examen blanc");
-  window.scrollTo(0,0);
+  toTop();
 }
 
 /* --- Quiz --- */
@@ -617,7 +620,7 @@ function quiz(list,label,onBack){
         document.getElementById("no").onclick=()=>{missed.push(q);n++;render()};
       };
     }
-    window.scrollTo(0,0);
+    toTop();
   }
   function result(){
     const pct=Math.round(score/qs.length*100);
@@ -634,7 +637,7 @@ function quiz(list,label,onBack){
     document.getElementById("back").onclick=back;
     document.getElementById("again").onclick=()=>quiz(list,label,onBack);
     const r=document.getElementById("retry");if(r)r.onclick=()=>quiz(missed.map(m=>QUESTIONS.find(x=>x.q===m.q)),"Questions ratées",onBack);
-    window.scrollTo(0,0);
+    toTop();
   }
   render();
 }
